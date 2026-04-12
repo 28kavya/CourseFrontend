@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #dde3f5;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 460px;
+        }
+        .top-accent {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #6c63ff, #48c774);
+            border-radius: 6px;
+            margin-bottom: 1.8rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #ede9ff;
+            color: #6c63ff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        h1 { font-size: 24px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+        .subtitle { font-size: 14px; color: #6b7280; margin-bottom: 1.6rem; }
+        .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 1rem; }
+        .field label {
+            font-size: 11px; font-weight: 700; color: #374151;
+            letter-spacing: 0.6px; text-transform: uppercase;
+        }
+        .field input, .field select {
+            padding: 11px 14px; border-radius: 10px;
+            border: 1.5px solid #e5e7eb; font-size: 14px;
+            color: #1a1a2e; background: #f9fafb;
+            outline: none; width: 100%; transition: border 0.2s;
+        }
+        .field input::placeholder { color: #9ca3af; }
+        .field input:focus, .field select:focus {
+            border-color: #6c63ff; background: #fff;
+        }
+        .info-box {
+            display: none;
+            background: #f0f4ff;
+            border: 1.5px solid #dde3f5;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 1rem;
+            gap: 12px;
+        }
+        .info-box.visible { display: flex; }
+        .info-item { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .info-item span:first-child {
+            font-size: 10px; font-weight: 700;
+            color: #6c63ff; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .info-item span:last-child { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+        .divider { height: 1px; background: #f3f4f6; margin: 1rem 0; }
+        .submit-btn {
+            width: 100%; padding: 13px; border-radius: 10px;
+            border: none; background: #6c63ff; color: #fff;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .submit-btn:hover { background: #574fd6; transform: translateY(-1px); }
+        .footer-text { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="top-accent"></div>
+        <span class="badge">Enroll now</span>
+        <h1>Register a course</h1>
+        <p class="subtitle">Kickstart your career with an amazing course today</p>
+        <form action="https://courses-7c6p.onrender.com/Coursereg/courses/register" method="post">
+            <div class="field">
+                <label>Your name</label>
+                <input type="text" name="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="field">
+                <label>Email address</label>
+                <input type="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="field">
+                <label>Choose a course</label>
+                <select name="coursename" id="courseSelect" onchange="showInfo()" required>
+                    <option value="">-- Select a Course --</option>
+                    <option value="1" data-trainer="Dr. Rahul Sharma" data-duration="3 Months">Java Programming</option>
+                    <option value="2" data-trainer="Prof. Priya Menon" data-duration="2 Months">Python Basics</option>
+                    <option value="3" data-trainer="Mr. Arjun Nair" data-duration="4 Months">Web Development</option>
+                    <option value="4" data-trainer="Dr. Sneha Iyer" data-duration="6 Months">Data Science</option>
+                    <option value="5" data-trainer="Prof. Vikram Das" data-duration="5 Months">Machine Learning</option>
+                    <option value="6" data-trainer="Mr. Karthik Raj" data-duration="3 Months">Cloud Computing</option>
+                    <option value="7" data-trainer="Ms. Divya Pillai" data-duration="2 Months">DevOps</option>
+                    <option value="8" data-trainer="Dr. Arun Kumar" data-duration="4 Months">Cybersecurity</option>
+                    <option value="9" data-trainer="Mr. Rohan Verma" data-duration="2 Months">React JS</option>
+                    <option value="10" data-trainer="Prof. Anitha Rajan" data-duration="3 Months">Spring Boot</option>
+                    <option value="11" data-trainer="Mr. Suresh Babu" data-duration="1 Month">MySQL Database</option>
+                    <option value="12" data-trainer="Ms. Kavitha Nair" data-duration="2 Months">Angular Framework</option>
+                    <option value="13" data-trainer="Dr. Manoj Pillai" data-duration="3 Months">Docker & Kubernetes</option>
+                    <option value="14" data-trainer="Prof. Lakshmi Devi" data-duration="6 Months">Artificial Intelligence</option>
+                    <option value="15" data-trainer="Mr. Nikhil Menon" data-duration="4 Months">Blockchain Technology</option>
+                </select>
+            </div>
+            <div class="info-box" id="infoBox">
+                <div class="info-item">
+                    <span>Trainer</span>
+                    <span id="trainerVal">-</span>
+                </div>
+                <div class="info-item">
+                    <span>Duration</span>
+                    <span id="durationVal">-</span>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <button type="submit" class="submit-btn">Submit Registration</button>
+            <p class="footer-text">By registering you agree to our terms &amp; conditions</p>
+        </form>
+    </div>
+    <script>
+        function showInfo() {
+            const sel = document.getElementById('courseSelect');
+            const box = document.getElementById('infoBox');
+            const opt = sel.options[sel.selectedIndex];
+            if (sel.value) {
+                document.getElementById('trainerVal').textContent = opt.dataset.trainer;
+                document.getElementById('durationVal').textContent = opt.dataset.duration;
+                box.classList.add('visible');
+            } else {
+                box.classList.remove('visible');
+            }
+        }
+    </script>
+</body>
+</html>

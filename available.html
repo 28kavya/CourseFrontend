@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Courses</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+            padding: 2.5rem 2rem;
+        }
+        .top-accent {
+            width: 80px;
+            height: 5px;
+            background: linear-gradient(90deg, #6c63ff, #48c774);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #ede9ff;
+            color: #6c63ff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        .table-wrap {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #dde3f5;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #6c63ff; }
+        thead th {
+            color: #ffffff;
+            padding: 14px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: 0.4px;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f8f7ff; }
+        tbody td { padding: 14px 20px; font-size: 14px; color: #374151; }
+        .id-badge {
+            display: inline-block;
+            background: #ede9ff;
+            color: #6c63ff;
+            font-size: 12px;
+            font-weight: 700;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 28px;
+        }
+        .course-name { font-weight: 600; color: #1a1a2e; }
+        .trainer-text { color: #6b7280; font-size: 13px; }
+        .duration-badge {
+            display: inline-block;
+            background: #e8f9f0;
+            color: #1a7a4a;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 900px; margin: 0 auto;">
+        <div class="top-accent"></div>
+        <span class="badge">Courses</span>
+        <h1>Available Courses</h1>
+        <p class="subtitle">Browse all available courses, trainers and durations</p>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Course Name</th>
+                    <th>Trainer</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody id="courseData">
+                <tr><td colspan="4" class="empty">Loading courses...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        fetch('https://courses-7c6p.onrender.com/Coursereg/courses')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('courseData');
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="empty">No courses available.</td></tr>';
+                return;
+            }
+            data.forEach(course => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="id-badge">${course.courseid}</span></td>
+                    <td><span class="course-name">${course.coursename}</span></td>
+                    <td><span class="trainer-text">${course.trainer}</span></td>
+                    <td><span class="duration-badge">${course.duration}</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            document.getElementById('courseData').innerHTML =
+                '<tr><td colspan="4" class="empty">Failed to load courses.</td></tr>';
+        });
+    </script>
+</body>
+</html>
