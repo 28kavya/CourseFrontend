@@ -138,12 +138,13 @@
                     <td><span class="id-badge">${course.courseid}</span></td>
                     <td><span class="course-name">${course.coursename}</span></td>
                     <td><span class="trainer-text">${course.trainer}</span></td>
-                    <td><span class="duration-badge">${course.duration}</span></td>
+                    <td><span class="duration-badge">${course.duration} days</span></td>
                 `;
                 tableBody.appendChild(row);
             });
         })
         .catch(error => {
+            console.error('Error:', error);
             document.getElementById('courseData').innerHTML =
                 '<tr><td colspan="4" class="empty">Failed to load courses.</td></tr>';
         });

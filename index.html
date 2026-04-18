@@ -3,150 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Registration System</title>
+    <title>Course Registration Dashboard</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: #f0f4ff;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8f6ff 100%);
             min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(108, 99, 255, 0.1);
+        }
+        .header h1 { font-size: 32px; color: #1a1a2e; margin-bottom: 8px; font-weight: 800; }
+        .header p { color: #6b7280; font-size: 15px; }
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid #dde3f5;
+            background: #ffffff;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .tab-btn:hover { border-color: #6c63ff; color: #6c63ff; }
+        .tab-btn.active {
+            background: #6c63ff;
+            color: #ffffff;
+            border-color: #6c63ff;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #dde3f5;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 1.5rem; font-weight: 700; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-            text-align: center;
+            gap: 6px;
         }
-        .top-accent {
-            width: 80px;
-            height: 5px;
-            background: linear-gradient(90deg, #6c63ff, #48c774);
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input, .form-group select {
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            font-size: 14px;
+            color: #1a1a2e;
+            background: #f9fafb;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-group input::placeholder { color: #9ca3af; }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #6c63ff;
+            background: #ffffff;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #6c63ff;
+            color: #ffffff;
+        }
+        .btn-primary:hover { background: #574fd6; }
+        .btn-danger {
+            background: #ef4444;
+            color: #ffffff;
+        }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1.5px solid #e5e7eb;
+        }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #dde3f5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: #6c63ff;
+        }
+        thead th {
+            color: #ffffff;
+            padding: 14px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            letter-spacing: 0.4px;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.15s;
+        }
+        tbody tr:hover { background: #f8f7ff; }
+        tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: #374151;
         }
         .badge {
             display: inline-block;
-            background: #ede9ff;
-            color: #6c63ff;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 20px;
-            margin-bottom: 1rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        h1 {
-            font-size: 36px;
-            font-weight: 800;
-            color: #1a1a2e;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 16px;
-            color: #6b7280;
-            margin-bottom: 3rem;
-            max-width: 420px;
-            line-height: 1.6;
-        }
-        .btn-grid {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 1.4rem 2rem;
-            border-radius: 16px;
-            border: 1.5px solid #dde3f5;
-            background: #ffffff;
-            text-decoration: none;
-            min-width: 150px;
-            transition: border 0.2s, transform 0.15s;
-        }
-        .btn:hover {
-            border-color: #6c63ff;
-            transform: translateY(-3px);
-        }
-        .btn-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        .purple { background: #ede9ff; }
-        .green  { background: #e8f9f0; }
-        .blue   { background: #e6f1fb; }
-        .btn-label {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-        .btn-desc {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-        .stats {
-            display: flex;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        .stat-num {
-            font-size: 24px;
-            font-weight: 800;
-            color: #6c63ff;
-        }
-        .stat-label {
             font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-primary { background: #ede9ff; color: #6c63ff; }
+        .badge-success { background: #e8f9f0; color: #1a7a4a; }
+        .badge-info { background: #e6f1fb; color: #0369a1; }
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+        }
+        .alert-success {
+            background: #e8f9f0;
+            color: #1a7a4a;
+            border: 1px solid #b8e6d5;
+        }
+        .alert-danger {
+            background: #ffe8e6;
+            color: #d1293a;
+            border: 1px solid #ffc5c1;
+        }
+        .alert-info {
+            background: #e6f1fb;
+            color: #0369a1;
+            border: 1px solid #bae0ff;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0 4px 0 0;
+        }
+        .empty {
+            text-align: center;
+            padding: 2rem;
             color: #9ca3af;
-            margin-top: 2px;
+            font-size: 14px;
+        }
+        .loading { text-align: center; padding: 1rem; color: #6c63ff; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #6c63ff 0%, #5b5fe0 100%);
+            color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-number { font-size: 28px; font-weight: 800; }
+        .stat-label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header { margin-bottom: 1.5rem; }
+        .modal-header h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 4px; }
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
         }
     </style>
 </head>
 <body>
-    <div class="top-accent"></div>
-    <span class="badge">Welcome</span>
-    <h1>Course Registration</h1>
-    <p class="subtitle">Hello Everyone! Welcome to our project. Explore, register and track your learning journey.</p>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Course Registration Dashboard</h1>
+            <p>Manage courses and student enrollments with ease</p>
+        </div>
 
-    <div class="btn-grid">
-        <a href="register.html" class="btn">
-            <div class="btn-icon purple">📝</div>
-            <span class="btn-label">Register</span>
-            <span class="btn-desc">Enroll in a course</span>
-        </a>
-        <a href="available.html" class="btn">
-            <div class="btn-icon green">📚</div>
-            <span class="btn-label">Available Courses</span>
-            <span class="btn-desc">Browse all courses</span>
-        </a>
-        <a href="enrolled.html" class="btn">
-            <div class="btn-icon blue">🎓</div>
-            <span class="btn-label">Enrolled Students</span>
-            <span class="btn-desc">View enrollments</span>
-        </a>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('courses')">Courses</button>
+            <button class="tab-btn" onclick="switchTab('enrollments')">Enrollments</button>
+            <button class="tab-btn" onclick="switchTab('search')">Search & Manage</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCourses">0</div>
+                    <div class="stat-label">Total Courses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalEnrollments">0</div>
+                    <div class="stat-label">Total Enrollments</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    <button class="btn btn-primary" onclick="switchTab('enrollments')">View Enrollments</button>
+                    <button class="btn btn-primary" onclick="switchTab('courses')">Browse Courses</button>
+                    <button class="btn btn-secondary" onclick="loadDashboard()">Refresh Stats</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COURSES TAB -->
+        <div id="courses" class="tab-content">
+            <div class="card">
+                <h2>Available Courses</h2>
+                <div id="coursesAlert"></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course ID</th>
+                                <th>Course Name</th>
+                                <th>Trainer</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coursesList">
+                            <tr><td colspan="4" class="empty">Loading courses...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENROLLMENTS TAB -->
+        <div id="enrollments" class="tab-content">
+            <div class="card">
+                <h2>Enroll Student</h2>
+                <div id="enrollAlert"></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Student Name</label>
+                        <input type="text" id="enrollName" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="enrollEmail" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Course</label>
+                        <select id="enrollCourse" required>
+                            <option value="">-- Select a Course --</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="enrollStudent()">Enroll Student</button>
+            </div>
+
+            <div class="card">
+                <h2>Current Enrollments</h2>
+                <div id="enrollmentsAlert"></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Course</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enrollmentsList">
+                            <tr><td colspan="5" class="empty">Loading enrollments...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH & MANAGE TAB -->
+        <div id="search" class="tab-content">
+            <div class="card">
+                <h2>Search Students</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Search by Email</label>
+                        <input type="email" id="searchEmail" placeholder="student@example.com">
+                        <button class="btn btn-primary" style="margin-top: 24px;" onclick="searchByEmail()">Search</button>
+                    </div>
+                </div>
+                <div id="emailSearchResults"></div>
+            </div>
+
+            <div class="card">
+                <h2>Search by Name</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Search by Name</label>
+                        <input type="text" id="searchName" placeholder="e.g., John">
+                        <button class="btn btn-primary" style="margin-top: 24px;" onclick="searchByName()">Search</button>
+                    </div>
+                </div>
+                <div id="nameSearchResults"></div>
+            </div>
+
+            <div class="card">
+                <h2>Check Enrollment Status</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="checkEmail" placeholder="student@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Course ID</label>
+                        <input type="text" id="checkCourseId" placeholder="CS101">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="checkEnrollment()">Check Status</button>
+                <div id="enrollmentStatusResult"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-num">15</div>
-            <div class="stat-label">Courses</div>
-        </div>
-        <div class="stat">
-            <div class="stat-num">10+</div>
-            <div class="stat-label">Trainers</div>
-        </div>
-        <div class="stat">
-            <div class="stat-num">6</div>
-            <div class="stat-label">Months Max</div>
-        </div>
-    </div>
+    <script>
+        const API_BASE = 'https://courses-7c6p.onrender.com/api';
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'dashboard') loadDashboard();
+            if (tabName === 'courses') loadCourses();
+            if (tabName === 'enrollments') {
+                loadEnrollments();
+                loadCoursesForDropdown();
+            }
+        }
+
+        function showAlert(elementId, message, type = 'success') {
+            const alertEl = document.getElementById(elementId);
+            alertEl.innerHTML = `<div class="alert alert-${type}">✓ ${message}</div>`;
+            setTimeout(() => alertEl.innerHTML = '', 4000);
+        }
+
+        // DASHBOARD
+        async function loadDashboard() {
+            try {
+                const [courses, enrollments] = await Promise.all([
+                    fetch(`${API_BASE}/courses`).then(r => r.json()),
+                    fetch(`${API_BASE}/enrollments`).then(r => r.json())
+                ]);
+                
+                document.getElementById('totalCourses').textContent = courses.length;
+                document.getElementById('totalStudents').textContent = new Set(enrollments.map(e => e.email)).size;
+                document.getElementById('totalEnrollments').textContent = enrollments.length;
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // COURSES
+        async function loadCourses() {
+            try {
+                const courses = await fetch(`${API_BASE}/courses`).then(r => r.json());
+                const coursesList = document.getElementById('coursesList');
+                
+                if (courses.length === 0) {
+                    coursesList.innerHTML = '<tr><td colspan="4" class="empty">No courses available</td></tr>';
+                    return;
+                }
+
+                coursesList.innerHTML = courses.map(course => `
+                    <tr>
+                        <td><span class="badge badge-primary">${course.courseid}</span></td>
+                        <td><strong>${course.coursename}</strong></td>
+                        <td>${course.trainer}</td>
+                        <td><span class="badge badge-success">${course.duration} days</span></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                document.getElementById('coursesAlert').innerHTML = `<div class="alert alert-danger">Failed to load courses</div>`;
+            }
+        }
+
+        // ENROLLMENTS
+        async function loadEnrollments() {
+            try {
+                const enrollments = await fetch(`${API_BASE}/enrollments`).then(r => r.json());
+                const enrollmentsList = document.getElementById('enrollmentsList');
+                
+                if (enrollments.length === 0) {
+                    enrollmentsList.innerHTML = '<tr><td colspan="5" class="empty">No enrollments yet</td></tr>';
+                    return;
+                }
+
+                enrollmentsList.innerHTML = enrollments.map(enrollment => `
+                    <tr>
+                        <td>${enrollment.id}</td>
+                        <td><strong>${enrollment.name}</strong></td>
+                        <td>${enrollment.email}</td>
+                        <td><span class="badge badge-info">${enrollment.course.coursename}</span></td>
+                        <td>
+                            <button class="btn btn-danger action-btn" onclick="unenroll(${enrollment.id})">Unenroll</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                document.getElementById('enrollmentsAlert').innerHTML = `<div class="alert alert-danger">Failed to load enrollments</div>`;
+            }
+        }
+
+        async function loadCoursesForDropdown() {
+            try {
+                const courses = await fetch(`${API_BASE}/courses`).then(r => r.json());
+                const select = document.getElementById('enrollCourse');
+                select.innerHTML = '<option value="">-- Select a Course --</option>' +
+                    courses.map(c => `<option value="${c.courseid}">${c.coursename}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+        }
+
+        async function enrollStudent() {
+            const name = document.getElementById('enrollName').value.trim();
+            const email = document.getElementById('enrollEmail').value.trim();
+            const courseid = document.getElementById('enrollCourse').value;
+
+            if (!name || !email || !courseid) {
+                showAlert('enrollAlert', 'Please fill all fields', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/enroll?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&courseid=${encodeURIComponent(courseid)}`,
+                    { method: 'POST' }
+                );
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('enrollAlert', data.message, 'success');
+                    document.getElementById('enrollName').value = '';
+                    document.getElementById('enrollEmail').value = '';
+                    document.getElementById('enrollCourse').value = '';
+                    loadEnrollments();
+                    loadDashboard();
+                } else {
+                    showAlert('enrollAlert', data.message || 'Enrollment failed', 'danger');
+                }
+            } catch (error) {
+                showAlert('enrollAlert', 'Error: ' + error.message, 'danger');
+            }
+        }
+
+        async function unenroll(enrollmentId) {
+            if (!confirm('Are you sure you want to unenroll this student?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/enrollments/${enrollmentId}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('enrollmentsAlert', data.message, 'success');
+                    loadEnrollments();
+                    loadDashboard();
+                } else {
+                    showAlert('enrollmentsAlert', data.message || 'Unenroll failed', 'danger');
+                }
+            } catch (error) {
+                showAlert('enrollmentsAlert', 'Error: ' + error.message, 'danger');
+            }
+        }
+
+        // SEARCH
+        async function searchByEmail() {
+            const email = document.getElementById('searchEmail').value.trim();
+            if (!email) {
+                showAlert('emailSearchResults', 'Please enter an email', 'danger');
+                return;
+            }
+
+            try {
+                const enrollments = await fetch(`${API_BASE}/enrollments/email/${encodeURIComponent(email)}`).then(r => r.json()).catch(() => []);
+                const resultsEl = document.getElementById('emailSearchResults');
+
+                if (enrollments.length === 0) {
+                    resultsEl.innerHTML = `<div class="alert alert-info">No enrollments found for ${email}</div>`;
+                    return;
+                }
+
+                resultsEl.innerHTML = '<h3 style="margin: 1rem 0 0.5rem; color: #1a1a2e;">Results:</h3>' +
+                    enrollments.map(e => `
+                        <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
+                            <p><strong>Name:</strong> ${e.name}</p>
+                            <p><strong>Email:</strong> ${e.email}</p>
+                            <p><strong>Course:</strong> <span class="badge badge-info">${e.course.coursename}</span></p>
+                        </div>
+                    `).join('');
+            } catch (error) {
+                showAlert('emailSearchResults', 'Error: ' + error.message, 'danger');
+            }
+        }
+
+        async function searchByName() {
+            const name = document.getElementById('searchName').value.trim();
+            if (!name) {
+                showAlert('nameSearchResults', 'Please enter a name', 'danger');
+                return;
+            }
+
+            try {
+                const enrollments = await fetch(`${API_BASE}/enrollments/name/${encodeURIComponent(name)}`).then(r => r.json()).catch(() => []);
+                const resultsEl = document.getElementById('nameSearchResults');
+
+                if (enrollments.length === 0) {
+                    resultsEl.innerHTML = `<div class="alert alert-info">No students found matching "${name}"</div>`;
+                    return;
+                }
+
+                resultsEl.innerHTML = '<h3 style="margin: 1rem 0 0.5rem; color: #1a1a2e;">Results:</h3>' +
+                    enrollments.map(e => `
+                        <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin: 0.5rem 0;">
+                            <p><strong>Name:</strong> ${e.name}</p>
+                            <p><strong>Email:</strong> ${e.email}</p>
+                            <p><strong>Course:</strong> <span class="badge badge-info">${e.course.coursename}</span></p>
+                        </div>
+                    `).join('');
+            } catch (error) {
+                showAlert('nameSearchResults', 'Error: ' + error.message, 'danger');
+            }
+        }
+
+        async function checkEnrollment() {
+            const email = document.getElementById('checkEmail').value.trim();
+            const courseid = document.getElementById('checkCourseId').value.trim();
+
+            if (!email || !courseid) {
+                showAlert('enrollmentStatusResult', 'Please fill all fields', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/check-enrollment?email=${encodeURIComponent(email)}&courseid=${encodeURIComponent(courseid)}`
+                ).then(r => r.json());
+
+                const resultsEl = document.getElementById('enrollmentStatusResult');
+                const status = response.enrolled ? '✓ Enrolled' : '✗ Not Enrolled';
+                const alertClass = response.enrolled ? 'success' : 'info';
+                resultsEl.innerHTML = `<div class="alert alert-${alertClass}" style="margin-top: 1rem;">${status}</div>`;
+            } catch (error) {
+                showAlert('enrollmentStatusResult', 'Error: ' + error.message, 'danger');
+            }
+        }
+
+        // Initial load
+        loadDashboard();
+    </script>
 </body>
 </html>

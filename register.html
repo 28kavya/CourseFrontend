@@ -83,7 +83,10 @@
             transition: background 0.2s, transform 0.1s;
         }
         .submit-btn:hover { background: #574fd6; transform: translateY(-1px); }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
         .footer-text { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 1rem; }
+        .success-msg { display: none; color: #1a7a4a; background: #e8f9f0; padding: 12px; border-radius: 8px; margin-bottom: 1rem; }
+        .error-msg { display: none; color: #d1293a; background: #ffe8e6; padding: 12px; border-radius: 8px; margin-bottom: 1rem; }
     </style>
 </head>
 <body>
@@ -92,34 +95,36 @@
         <span class="badge">Enroll now</span>
         <h1>Register a course</h1>
         <p class="subtitle">Kickstart your career with an amazing course today</p>
-        <form action="https://courses-7c6p.onrender.com//api/enroll" method="post">
+        <div class="success-msg" id="successMsg"></div>
+        <div class="error-msg" id="errorMsg"></div>
+        <form id="registerForm">
             <div class="field">
                 <label>Your name</label>
-                <input type="text" name="name" placeholder="Enter your full name" required>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
             </div>
             <div class="field">
                 <label>Email address</label>
-                <input type="email" name="email" placeholder="Enter your email" required>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
             </div>
             <div class="field">
                 <label>Choose a course</label>
-                <select name="coursename" id="courseSelect" onchange="showInfo()" required>
+                <select id="courseSelect" name="courseid" onchange="showInfo()" required>
                     <option value="">-- Select a Course --</option>
-                    <option value="1" data-trainer="Dr. Rahul Sharma" data-duration="3 Months">Java Programming</option>
-                    <option value="2" data-trainer="Prof. Priya Menon" data-duration="2 Months">Python Basics</option>
-                    <option value="3" data-trainer="Mr. Arjun Nair" data-duration="4 Months">Web Development</option>
-                    <option value="4" data-trainer="Dr. Sneha Iyer" data-duration="6 Months">Data Science</option>
-                    <option value="5" data-trainer="Prof. Vikram Das" data-duration="5 Months">Machine Learning</option>
-                    <option value="6" data-trainer="Mr. Karthik Raj" data-duration="3 Months">Cloud Computing</option>
-                    <option value="7" data-trainer="Ms. Divya Pillai" data-duration="2 Months">DevOps</option>
-                    <option value="8" data-trainer="Dr. Arun Kumar" data-duration="4 Months">Cybersecurity</option>
-                    <option value="9" data-trainer="Mr. Rohan Verma" data-duration="2 Months">React JS</option>
-                    <option value="10" data-trainer="Prof. Anitha Rajan" data-duration="3 Months">Spring Boot</option>
-                    <option value="11" data-trainer="Mr. Suresh Babu" data-duration="1 Month">MySQL Database</option>
-                    <option value="12" data-trainer="Ms. Kavitha Nair" data-duration="2 Months">Angular Framework</option>
-                    <option value="13" data-trainer="Dr. Manoj Pillai" data-duration="3 Months">Docker & Kubernetes</option>
-                    <option value="14" data-trainer="Prof. Lakshmi Devi" data-duration="6 Months">Artificial Intelligence</option>
-                    <option value="15" data-trainer="Mr. Nikhil Menon" data-duration="4 Months">Blockchain Technology</option>
+                    <option value="CS101" data-trainer="Dr. Rahul Sharma" data-duration="3 Months">Java Programming</option>
+                    <option value="PY102" data-trainer="Prof. Priya Menon" data-duration="2 Months">Python Basics</option>
+                    <option value="WD103" data-trainer="Mr. Arjun Nair" data-duration="4 Months">Web Development</option>
+                    <option value="DS104" data-trainer="Dr. Sneha Iyer" data-duration="6 Months">Data Science</option>
+                    <option value="ML105" data-trainer="Prof. Vikram Das" data-duration="5 Months">Machine Learning</option>
+                    <option value="CC106" data-trainer="Mr. Karthik Raj" data-duration="3 Months">Cloud Computing</option>
+                    <option value="DO107" data-trainer="Ms. Divya Pillai" data-duration="2 Months">DevOps</option>
+                    <option value="CS108" data-trainer="Dr. Arun Kumar" data-duration="4 Months">Cybersecurity</option>
+                    <option value="RJ109" data-trainer="Mr. Rohan Verma" data-duration="2 Months">React JS</option>
+                    <option value="SB110" data-trainer="Prof. Anitha Rajan" data-duration="3 Months">Spring Boot</option>
+                    <option value="DB111" data-trainer="Mr. Suresh Babu" data-duration="1 Month">MySQL Database</option>
+                    <option value="AF112" data-trainer="Ms. Kavitha Nair" data-duration="2 Months">Angular Framework</option>
+                    <option value="DK113" data-trainer="Dr. Manoj Pillai" data-duration="3 Months">Docker & Kubernetes</option>
+                    <option value="AI114" data-trainer="Prof. Lakshmi Devi" data-duration="6 Months">Artificial Intelligence</option>
+                    <option value="BT115" data-trainer="Mr. Nikhil Menon" data-duration="4 Months">Blockchain Technology</option>
                 </select>
             </div>
             <div class="info-box" id="infoBox">
@@ -133,10 +138,11 @@
                 </div>
             </div>
             <div class="divider"></div>
-            <button type="submit" class="submit-btn">Submit Registration</button>
+            <button type="submit" class="submit-btn" id="submitBtn">Submit Registration</button>
             <p class="footer-text">By registering you agree to our terms &amp; conditions</p>
         </form>
     </div>
+
     <script>
         function showInfo() {
             const sel = document.getElementById('courseSelect');
@@ -150,6 +156,51 @@
                 box.classList.remove('visible');
             }
         }
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const courseid = document.getElementById('courseSelect').value;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                const response = await fetch(
+                    `https://courses-7c6p.onrender.com/api/enroll?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&courseid=${encodeURIComponent(courseid)}`,
+                    { method: 'POST' }
+                );
+                
+                const data = await response.json();
+                
+                const successMsg = document.getElementById('successMsg');
+                const errorMsg = document.getElementById('errorMsg');
+                
+                if (response.ok) {
+                    successMsg.textContent = '✓ ' + data.message;
+                    successMsg.style.display = 'block';
+                    errorMsg.style.display = 'none';
+                    document.getElementById('registerForm').reset();
+                    document.getElementById('infoBox').classList.remove('visible');
+                    setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
+                } else {
+                    errorMsg.textContent = '✗ ' + (data.message || 'Enrollment failed');
+                    errorMsg.style.display = 'block';
+                    successMsg.style.display = 'none';
+                }
+            } catch (error) {
+                const errorMsg = document.getElementById('errorMsg');
+                errorMsg.textContent = '✗ Error: ' + error.message;
+                errorMsg.style.display = 'block';
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Registration';
+            }
+        });
     </script>
 </body>
 </html>

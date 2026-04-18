@@ -141,18 +141,19 @@
                 tableBody.innerHTML = '<tr><td colspan="3" class="empty">No students enrolled yet.</td></tr>';
                 return;
             }
-            students.forEach(course => {
-                const initials = course.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+            students.forEach(enrollment => {
+                const initials = enrollment.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><span class="avatar">${initials}</span>${course.name}</td>
-                    <td><span class="email-text">${course.email}</span></td>
-                    <td><span class="course-badge">${course.coursename}</span></td>
+                    <td><span class="avatar">${initials}</span>${enrollment.name}</td>
+                    <td><span class="email-text">${enrollment.email}</span></td>
+                    <td><span class="course-badge">${enrollment.course.coursename}</span></td>
                 `;
                 tableBody.appendChild(row);
             });
         })
         .catch(error => {
+            console.error('Error:', error);
             document.getElementById('enrolledtable').innerHTML =
                 '<tr><td colspan="3" class="empty">Failed to load data.</td></tr>';
         });
