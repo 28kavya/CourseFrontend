@@ -132,7 +132,7 @@
     </div>
 
     <script>
-        fetch('https://courses-7c6p.onrender.com/Coursereg/courses/enrolled')
+        fetch('https://courses-7c6p.onrender.com/api/enrollments')
         .then(response => response.json())
         .then(students => {
             const tableBody = document.getElementById('enrolledtable');
