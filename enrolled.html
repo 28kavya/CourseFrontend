@@ -5,13 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enrolled Students</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f4ff;
-            min-height: 100vh;
-            padding: 2.5rem 2rem;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
         }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f5f3ff 100%);
+            min-height: 100vh;
+            padding: 2.5rem 1rem;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header-section {
+            margin-bottom: 2.5rem;
+        }
+        
         .top-accent {
             width: 80px;
             height: 5px;
@@ -19,144 +34,404 @@
             border-radius: 6px;
             margin-bottom: 1rem;
         }
+        
         .badge {
             display: inline-block;
             background: #ede9ff;
             color: #6c63ff;
             font-size: 11px;
             font-weight: 700;
-            padding: 4px 14px;
+            padding: 6px 16px;
             border-radius: 20px;
             margin-bottom: 0.8rem;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
         }
+        
         h1 {
-            font-size: 26px;
+            font-size: 32px;
             font-weight: 800;
             color: #1a1a2e;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
+        
         .subtitle {
-            font-size: 14px;
+            font-size: 15px;
             color: #6b7280;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
         }
+        
         .table-wrap {
             background: #ffffff;
             border-radius: 16px;
-            border: 1px solid #dde3f5;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             overflow: hidden;
-            max-width: 900px;
-            margin: 0 auto;
+            border: 1px solid #e5e7eb;
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
         }
+        
         thead {
-            background: #6c63ff;
+            background: linear-gradient(90deg, #6c63ff 0%, #5a52d5 100%);
         }
+        
         thead th {
             color: #ffffff;
-            padding: 14px 20px;
-            font-size: 13px;
-            font-weight: 600;
+            padding: 18px 24px;
+            font-size: 12px;
+            font-weight: 700;
             text-align: left;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
         }
+        
         tbody tr {
             border-bottom: 1px solid #f3f4f6;
-            transition: background 0.15s;
+            transition: all 0.2s ease;
         }
-        tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: #f8f7ff; }
+        
+        tbody tr:hover {
+            background: #f9f8ff;
+        }
+        
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+        
         tbody td {
-            padding: 14px 20px;
+            padding: 18px 24px;
             font-size: 14px;
             color: #374151;
         }
+        
+        .student-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
         .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #ede9ff;
-            color: #6c63ff;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c63ff, #48c774);
+            color: #ffffff;
+            font-size: 13px;
             font-weight: 700;
-            margin-right: 8px;
-            vertical-align: middle;
         }
-        .email-text { color: #6c63ff; font-size: 13px; }
+        
+        .student-name {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .email-text {
+            color: #6c63ff;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
         .course-badge {
             display: inline-block;
             background: #e8f9f0;
             color: #1a7a4a;
             font-size: 12px;
             font-weight: 600;
-            padding: 3px 10px;
+            padding: 8px 14px;
             border-radius: 20px;
+            white-space: nowrap;
         }
-        .empty {
+        
+        .empty-state {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem 2rem;
             color: #9ca3af;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state-text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state-subtext {
+            font-size: 13px;
+            color: #d1d5db;
+        }
+        
+        .error-state {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+        }
+        
+        .error-state-title {
+            color: #991b1b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .error-state-text {
+            color: #7f1d1d;
             font-size: 14px;
+        }
+        
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            gap: 1rem;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #6c63ff;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #6c63ff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 24px;
+            }
+            
+            thead th {
+                padding: 14px 12px;
+                font-size: 11px;
+            }
+            
+            tbody td {
+                padding: 14px 12px;
+                font-size: 13px;
+            }
+            
+            .avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 11px;
+            }
         }
     </style>
 </head>
 <body>
-    <div style="max-width: 900px; margin: 0 auto;">
-        <div class="top-accent"></div>
-        <span class="badge">Enrollments</span>
-        <h1>Enrolled Students</h1>
-        <p class="subtitle">List of all students currently enrolled in courses</p>
-    </div>
+    <div class="container">
+        <div class="header-section">
+            <div class="top-accent"></div>
+            <span class="badge">Enrollments</span>
+            <h1>Enrolled Students</h1>
+            <p class="subtitle">Complete list of all students enrolled in courses</p>
+        </div>
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Email Address</th>
-                    <th>Course Enrolled</th>
-                </tr>
-            </thead>
-            <tbody id="enrolledtable">
-                <tr><td colspan="3" class="empty">Loading students...</td></tr>
-            </tbody>
-        </table>
+        <div id="statsContainer" class="stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-number" id="totalEnrollments">0</div>
+                <div class="stat-label">Total Enrollments</div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email Address</th>
+                        <th>Course Enrolled</th>
+                    </tr>
+                </thead>
+                <tbody id="enrolledtable">
+                    <tr>
+                        <td colspan="3">
+                            <div class="loading-spinner">
+                                <div class="spinner"></div>
+                                <div>Loading student enrollments...</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
-        fetch('https://courses-7c6p.onrender.com/api/enrollments')
-        .then(response => response.json())
-        .then(students => {
+        const API_URL = 'https://courses-7c6p.onrender.com/api/enrollments';
+
+        // Fetch and display enrollments
+        async function loadEnrollments() {
+            try {
+                console.log('Fetching enrollments from:', API_URL);
+                
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const enrollments = await response.json();
+                console.log('✅ Enrollments loaded:', enrollments);
+                
+                displayEnrollments(enrollments);
+            } catch (error) {
+                console.error('❌ Error loading enrollments:', error);
+                displayError(error.message);
+            }
+        }
+
+        function displayEnrollments(enrollments) {
             const tableBody = document.getElementById('enrolledtable');
-            tableBody.innerHTML = '';
-            if (students.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="3" class="empty">No students enrolled yet.</td></tr>';
+            const statsContainer = document.getElementById('statsContainer');
+            
+            // Handle empty list
+            if (!enrollments || enrollments.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="3">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <div class="empty-state-text">No students enrolled yet</div>
+                                <div class="empty-state-subtext">Enrollments will appear here once students register for courses</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                statsContainer.style.display = 'none';
                 return;
             }
-            students.forEach(enrollment => {
-                const initials = enrollment.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><span class="avatar">${initials}</span>${enrollment.name}</td>
-                    <td><span class="email-text">${enrollment.email}</span></td>
-                    <td><span class="course-badge">${enrollment.course.coursename}</span></td>
-                `;
+
+            // Clear loading state
+            tableBody.innerHTML = '';
+
+            // Add enrollment rows
+            enrollments.forEach((enrollment) => {
+                const row = createEnrollmentRow(enrollment);
                 tableBody.appendChild(row);
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('enrolledtable').innerHTML =
-                '<tr><td colspan="3" class="empty">Failed to load data.</td></tr>';
-        });
+
+            // Show stats
+            document.getElementById('totalEnrollments').textContent = enrollments.length;
+            statsContainer.style.display = 'grid';
+
+            console.log(`✅ Displayed ${enrollments.length} enrollment(s)`);
+        }
+
+        function createEnrollmentRow(enrollment) {
+            const row = document.createElement('tr');
+
+            // Extract data from enrollment object
+            const name = enrollment.name || 'Unknown Student';
+            const email = enrollment.email || 'N/A';
+            
+            // Extract course name - your Course model has 'coursename' field
+            const courseName = enrollment.course?.coursename || 'Unknown Course';
+
+            // Generate initials for avatar
+            const initials = name
+                .split(' ')
+                .map(part => part.charAt(0))
+                .join('')
+                .toUpperCase()
+                .slice(0, 2) || '?';
+
+            // Build row HTML
+            row.innerHTML = `
+                <td>
+                    <div class="student-cell">
+                        <div class="avatar">${escapeHtml(initials)}</div>
+                        <div class="student-name">${escapeHtml(name)}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="email-text">${escapeHtml(email)}</div>
+                </td>
+                <td>
+                    <span class="course-badge">${escapeHtml(courseName)}</span>
+                </td>
+            `;
+
+            return row;
+        }
+
+        function displayError(message) {
+            const tableBody = document.getElementById('enrolledtable');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="3">
+                        <div class="error-state">
+                            <div class="error-state-title">❌ Failed to Load Enrollments</div>
+                            <div class="error-state-text">${escapeHtml(message)}</div>
+                            <div class="error-state-text" style="margin-top: 0.5rem; font-size: 12px;">
+                                Check your backend connection and try refreshing the page.
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Utility function to prevent XSS attacks
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Load enrollments when page loads
+        window.addEventListener('DOMContentLoaded', loadEnrollments);
     </script>
 </body>
 </html>
