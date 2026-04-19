@@ -187,6 +187,7 @@
         .error-state-text {
             color: #7f1d1d;
             font-size: 14px;
+            margin-bottom: 0.5rem;
         }
         
         .loading-spinner {
@@ -241,6 +242,18 @@
             letter-spacing: 0.5px;
         }
         
+        .debug-info {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #78350f;
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 24px;
@@ -272,6 +285,8 @@
             <h1>Enrolled Students</h1>
             <p class="subtitle">Complete list of all students enrolled in courses</p>
         </div>
+
+        <div id="debugInfo" class="debug-info"></div>
 
         <div id="statsContainer" class="stats" style="display: none;">
             <div class="stat-card">
@@ -305,11 +320,12 @@
 
     <script>
         const API_URL = 'https://courses-7c6p.onrender.com/api/enrollments';
+        const DEBUG_MODE = true; // Set to false to hide debug info
 
         // Fetch and display enrollments
         async function loadEnrollments() {
             try {
-                console.log('Fetching enrollments from:', API_URL);
+                console.log('🔄 Fetching enrollments from:', API_URL);
                 
                 const response = await fetch(API_URL);
                 
@@ -317,14 +333,69 @@
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                const enrollments = await response.json();
-                console.log('✅ Enrollments loaded:', enrollments);
+                let data = await response.json();
+                console.log('📥 Raw API response:', data);
+                console.log('📊 Response type:', typeof data);
+                console.log('📌 Is Array?:', Array.isArray(data));
+                
+                // Handle different response formats
+                let enrollments = normalizeData(data);
+                
+                console.log('✅ Normalized enrollments:', enrollments);
+                console.log('📈 Total count:', enrollments.length);
                 
                 displayEnrollments(enrollments);
             } catch (error) {
                 console.error('❌ Error loading enrollments:', error);
                 displayError(error.message);
             }
+        }
+
+        // Normalize different API response formats
+        function normalizeData(data) {
+            console.log('🔍 Normalizing data...');
+            
+            // If it's already an array, return it
+            if (Array.isArray(data)) {
+                console.log('✅ Data is already an array');
+                return data;
+            }
+            
+            // If it's an object, check for common wrapper properties
+            if (typeof data === 'object' && data !== null) {
+                // Check for 'content' property (common in paginated responses)
+                if (Array.isArray(data.content)) {
+                    console.log('✅ Found data in "content" property');
+                    return data.content;
+                }
+                
+                // Check for '_embedded' property (HAL/HATEOAS format)
+                if (data._embedded && Array.isArray(data._embedded.registries)) {
+                    console.log('✅ Found data in "_embedded.registries" property');
+                    return data._embedded.registries;
+                }
+                
+                // Check for 'data' property
+                if (Array.isArray(data.data)) {
+                    console.log('✅ Found data in "data" property');
+                    return data.data;
+                }
+                
+                // Check for 'enrollments' property
+                if (Array.isArray(data.enrollments)) {
+                    console.log('✅ Found data in "enrollments" property');
+                    return data.enrollments;
+                }
+                
+                // If nothing found, log the structure and return empty array
+                console.warn('⚠️ Unknown data structure:', Object.keys(data));
+                showDebugInfo('Unexpected API response format. Properties: ' + Object.keys(data).join(', '));
+                return [];
+            }
+            
+            // If it's anything else, return empty array
+            console.warn('⚠️ Data is neither array nor object');
+            return [];
         }
 
         function displayEnrollments(enrollments) {
@@ -352,27 +423,45 @@
             tableBody.innerHTML = '';
 
             // Add enrollment rows
-            enrollments.forEach((enrollment) => {
-                const row = createEnrollmentRow(enrollment);
-                tableBody.appendChild(row);
+            enrollments.forEach((enrollment, index) => {
+                try {
+                    const row = createEnrollmentRow(enrollment);
+                    tableBody.appendChild(row);
+                } catch (error) {
+                    console.error(`❌ Error processing enrollment ${index}:`, error, enrollment);
+                }
             });
 
             // Show stats
             document.getElementById('totalEnrollments').textContent = enrollments.length;
             statsContainer.style.display = 'grid';
 
-            console.log(`✅ Displayed ${enrollments.length} enrollment(s)`);
+            console.log(`✅ Successfully displayed ${enrollments.length} enrollment(s)`);
         }
 
         function createEnrollmentRow(enrollment) {
             const row = document.createElement('tr');
 
-            // Extract data from enrollment object
-            const name = enrollment.name || 'Unknown Student';
-            const email = enrollment.email || 'N/A';
+            // Safely extract data with fallbacks
+            const name = getSafeValue(enrollment, 'name', 'Unknown Student');
+            const email = getSafeValue(enrollment, 'email', 'N/A');
             
-            // Extract course name - your Course model has 'coursename' field
-            const courseName = enrollment.course?.coursename || 'Unknown Course';
+            // Extract course name - handle nested course object
+            let courseName = 'Unknown Course';
+            if (enrollment.course) {
+                if (typeof enrollment.course === 'string') {
+                    courseName = enrollment.course;
+                } else if (typeof enrollment.course === 'object') {
+                    courseName = enrollment.course.coursename 
+                        || enrollment.course.name 
+                        || enrollment.course.courseId 
+                        || 'Unknown Course';
+                }
+            } else if (enrollment.coursename) {
+                courseName = enrollment.coursename;
+            } else if (enrollment.courseid) {
+                courseName = enrollment.courseid;
+            }
 
             // Generate initials for avatar
             const initials = name
@@ -401,6 +490,15 @@
             return row;
         }
 
+        function getSafeValue(obj, key, defaultValue = 'N/A') {
+            try {
+                const value = obj[key];
+                return value ? String(value).trim() : defaultValue;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+
         function displayError(message) {
             const tableBody = document.getElementById('enrolledtable');
             tableBody.innerHTML = `
@@ -409,13 +507,27 @@
                         <div class="error-state">
                             <div class="error-state-title">❌ Failed to Load Enrollments</div>
                             <div class="error-state-text">${escapeHtml(message)}</div>
-                            <div class="error-state-text" style="margin-top: 0.5rem; font-size: 12px;">
-                                Check your backend connection and try refreshing the page.
+                            <div class="error-state-text">
+                                <strong>Troubleshooting:</strong>
+                            </div>
+                            <div class="error-state-text">
+                                1. Make sure your backend is running<br>
+                                2. Check that the API URL is correct<br>
+                                3. Verify your database has enrollment data<br>
+                                4. Check browser console (F12) for more details
                             </div>
                         </div>
                     </td>
                 </tr>
             `;
+        }
+
+        function showDebugInfo(message) {
+            if (DEBUG_MODE) {
+                const debugDiv = document.getElementById('debugInfo');
+                debugDiv.textContent = '🔍 Debug: ' + message;
+                debugDiv.style.display = 'block';
+            }
         }
 
         // Utility function to prevent XSS attacks
